@@ -31,7 +31,7 @@ Plugin for Flake8
 ::
 
     $ flake8 --version
-    3.5.0 (import-single: 0.0.1, mccabe: 0.6.1, pycodestyle: 2.3.1, pyflakes: 1.6.0)
+    3.5.0 (flake8-import-single: 0.1.2, mccabe: 0.6.1, pycodestyle: 2.3.1, pyflakes: 1.6.0)
 
 Thanks
 ------

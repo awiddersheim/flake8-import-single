@@ -6,11 +6,11 @@ from flake8_import_single import version
 class ImportFinder(ast.NodeVisitor):
     def __init__(self, *args, **kwargs):
         super(ImportFinder, self).__init__(*args, **kwargs)
-        self.errors = set()
+        self.errors = []
 
     def visit_ImportFrom(self, node):
         if len(node.names) > 1:
-            self.errors.add((node.lineno, node.col_offset))
+            self.errors.append((node.lineno, node.col_offset))
 
 
 class Linter(object):
@@ -28,6 +28,6 @@ class Linter(object):
             yield (
                 error[0],
                 error[1],
-                'IS001 found multiple imports on single line.',
+                'IS001 found multiple imports on a single line.',
                 Linter,
             )

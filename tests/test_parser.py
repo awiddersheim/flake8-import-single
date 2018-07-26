@@ -4,6 +4,7 @@ import os
 import pytest
 
 from flake8_import_single.linter import ImportFinder
+from flake8_import_single.linter import Linter
 
 
 @pytest.fixture()
@@ -24,10 +25,23 @@ def load_test_case(filename):
     return ast.parse(data, path)
 
 
-def test_okay(parser):
-    parser.visit(load_test_case('okay.py'))
+def get_errors(errors):
+    results = []
 
-    assert not parser.errors
+    for error in list(errors):
+        assert len(error) == 4
+        assert error[2] == 'IS001 found multiple imports on a single line.'
+        assert error[3] == Linter
+
+        results.append((error[0], error[1]))
+
+    return results
+
+
+def test_okay(parser):
+    linter = Linter(load_test_case('okay.py'))
+
+    assert not list(linter.run())
 
 
 @pytest.mark.parametrize(
@@ -41,16 +55,18 @@ def test_okay(parser):
     ],
 )
 def test_single_error(example, parser):
-    parser.visit(load_test_case(example))
+    linter = Linter(load_test_case(example))
 
-    assert len(parser.errors) == 1
-    assert (2, 0) in parser.errors
+    assert get_errors(linter.run()) == [
+        (2, 0),
+    ]
 
 
 def test_multiple_errors(parser):
-    parser.visit(load_test_case('multiple_errors.py'))
+    linter = Linter(load_test_case('multiple_errors.py'))
 
-    assert len(parser.errors) == 3
-    assert (2, 0) in parser.errors
-    assert (9, 0) in parser.errors
-    assert (12, 0) in parser.errors
+    assert get_errors(linter.run()) == [
+        (2, 0),
+        (9, 0),
+        (12, 0),
+    ]

@@ -4,6 +4,21 @@ from setuptools import find_packages
 from setuptools import setup
 
 
+def local_scheme(version):
+    result = []
+
+    if version.branch != 'master' or version.dirty:
+        result.append('+{}'.format(version.node))
+
+        result.append(
+            '.d{}'.format(
+                version.time.strftime('%Y%m%d%H%M%S'),
+            ),
+        )
+
+    return ''.join(result)
+
+
 with io.open('README.md', encoding='utf-8') as f:
     long_description = f.read()
 
@@ -11,7 +26,8 @@ with io.open('README.md', encoding='utf-8') as f:
 setup(
     name='flake8-import-single',
     use_scm_version={
-        'local_scheme': 'node-and-timestamp',
+        # 'local_scheme': 'node-and-timestamp',
+        'local_scheme': local_scheme,
         'write_to': 'flake8_import_single/version.py'
     },
     setup_requires=[

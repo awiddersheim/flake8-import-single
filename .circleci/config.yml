@@ -32,10 +32,28 @@ jobs:
       - run: pip install --user tox
       - run: /home/circleci/.local/bin/tox
 
+  build:
+    docker:
+      - image: circleci/python:3.6
+    environment:
+      TOXENV: build
+    steps:
+      - checkout
+      - run: pip install --user tox
+      - run: /home/circleci/.local/bin/tox
+      - store_artifacts:
+          path: dist
+          destination: packages
+
 workflows:
   version: 2
-  test:
+  test-and-build:
     jobs:
       - flake8
       - python27
       - python36
+      - build:
+          requires:
+            - flake8
+            - python27
+            - python36

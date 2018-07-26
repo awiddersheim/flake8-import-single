@@ -65,12 +65,30 @@ workflows:
   version: 2
   test-and-build:
     jobs:
-      - flake8
-      - python27
-      - python34
-      - python35
-      - python36
-      - python37
+      - flake8:
+          filters:
+            tags:
+              only: /^v.*/
+      - python27:
+          filters:
+            tags:
+              only: /^v.*/
+      - python34:
+          filters:
+            tags:
+              only: /^v.*/
+      - python35:
+          filters:
+            tags:
+              only: /^v.*/
+      - python36:
+          filters:
+            tags:
+              only: /^v.*/
+      - python37:
+          filters:
+            tags:
+              only: /^v.*/
       - build:
           requires:
             - flake8
@@ -79,3 +97,6 @@ workflows:
             - python35
             - python36
             - python37
+          filters:
+            tags:
+              only: /^v.*/

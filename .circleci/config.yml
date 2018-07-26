@@ -1,26 +1,42 @@
 version: 2
 jobs:
-  python27:
+  python27: &test-template
     docker:
       - image: circleci/python:2.7
     environment:
-      PYTEST_ADDOPTS: -p no:sugar
       TOXENV: py27
     steps:
       - checkout
       - run: pip install --user tox
       - run: /home/circleci/.local/bin/tox
 
+  python34:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.4
+    environment:
+      TOXENV: py34
+
+  python35:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.5
+    environment:
+      TOXENV: py35
+
   python36:
+    <<: *test-template
     docker:
       - image: circleci/python:3.6
     environment:
-      PYTEST_ADDOPTS: -p no:sugar
       TOXENV: py36
-    steps:
-      - checkout
-      - run: pip install --user tox
-      - run: /home/circleci/.local/bin/tox
+
+  python37:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.7
+    environment:
+      TOXENV: py37
 
   flake8:
     docker:
@@ -51,9 +67,15 @@ workflows:
     jobs:
       - flake8
       - python27
+      - python34
+      - python35
       - python36
+      - python37
       - build:
           requires:
             - flake8
             - python27
+            - python34
+            - python35
             - python36
+            - python37

@@ -3,7 +3,7 @@ Flake8 Single Line Import Plugin
 
 A Flake8 plugin that requires single line imports.
 
-|Status|
+|Status| |PackageVersion| |PythonVersions|
 
 Introduction
 ------------
@@ -41,5 +41,14 @@ this plugin.
 
 .. _flake8-print: https://github.com/JBKahn/flake8-print
 
-.. |Status| image:: https://circleci.com/gh/awiddersheim/flake8-import-single/tree/master.svg?style=svg
-   :target: https://circleci.com/gh/awiddersheim/flake8-import-single/tree/master
+.. |PackageVersion| image:: https://img.shields.io/pypi/v/flake8-import-single.svg?style=flat
+    :alt: PyPI version
+    :target: https://pypi.org/project/flake8-import-single
+
+.. |PythonVersions| image:: https://img.shields.io/pypi/pyversions/flake8-import-single.svg
+    :alt: Supported Python versions
+    :target: https://pypi.org/project/flake8-import-single
+
+.. |Status| image:: https://img.shields.io/circleci/project/github/awiddersheim/flake8-import-single/master.svg
+    :alt: Build
+    :target: https://circleci.com/gh/awiddersheim/flake8-import-single

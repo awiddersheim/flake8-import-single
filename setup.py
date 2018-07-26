@@ -7,11 +7,17 @@ from setuptools import setup
 def local_scheme(version):
     result = []
 
-    if version.branch != 'master' or version.dirty:
+    if not version.exact and version.branch != 'master':
         result.append('+{}'.format(version.node))
 
+    if version.dirty:
+        if version.branch == 'master':
+            result.append('+')
+        else:
+            result.append('.')
+
         result.append(
-            '.d{}'.format(
+            'd{}'.format(
                 version.time.strftime('%Y%m%d%H%M%S'),
             ),
         )

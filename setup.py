@@ -5,24 +5,18 @@ from setuptools import setup
 
 
 def local_scheme(version):
-    result = []
+    from pkg_resources import iter_entry_points
 
-    if not version.exact and version.branch != 'master':
-        result.append('+{}'.format(version.node))
+    # NOTE(awiddersheim): Modify default behaviour slighlty by not
+    # adding any local scheme to a clean `master` branch.
+    if version.branch == 'master' and not version.dirty:
+        return ''
 
-    if version.dirty:
-        if version.branch == 'master':
-            result.append('+')
-        else:
-            result.append('.')
-
-        result.append(
-            'd{}'.format(
-                version.time.strftime('%Y%m%d%H%M%S'),
-            ),
-        )
-
-    return ''.join(result)
+    for item in iter_entry_points(
+        'setuptools_scm.local_scheme',
+        'node-and-timestamp'
+    ):
+        return item.load()(version)
 
 
 with io.open('README.md', encoding='utf-8') as f:
@@ -32,7 +26,6 @@ with io.open('README.md', encoding='utf-8') as f:
 setup(
     name='flake8-import-single',
     use_scm_version={
-        # 'local_scheme': 'node-and-timestamp',
         'local_scheme': local_scheme,
         'write_to': 'flake8_import_single/version.py'
     },

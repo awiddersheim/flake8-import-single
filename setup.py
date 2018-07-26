@@ -24,6 +24,7 @@ setup(
     ],
     author='Andrew Widdersheim',
     author_email='amwiddersheim@gmail.com',
+    url='https://github.com/awiddersheim/flake8-import-single',
     description='Flake8 plugin that requires single line imports.',
     long_description=long_description,
     packages=find_packages(exclude=['tests', 'tests.*']),

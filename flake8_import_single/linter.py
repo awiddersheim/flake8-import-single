@@ -14,7 +14,7 @@ class ImportFinder(ast.NodeVisitor):
 
 
 class Linter(object):
-    name = 'import-single'
+    name = 'flake8-import-single'
     version = version
 
     def __init__(self, tree):

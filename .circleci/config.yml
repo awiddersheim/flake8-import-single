@@ -40,7 +40,7 @@ jobs:
 
   flake8:
     docker:
-      - image: circleci/python:3.6
+      - image: circleci/python:3
     environment:
       TOXENV: flake8
     steps:
@@ -50,7 +50,7 @@ jobs:
 
   build:
     docker:
-      - image: circleci/python:3.6
+      - image: circleci/python:3
     environment:
       TOXENV: build
     steps:

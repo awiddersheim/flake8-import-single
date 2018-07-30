@@ -46,6 +46,7 @@ jobs:
       TOXENV: flake8
 
   check_readme:
+    <<: *test-template
     docker:
       - image: circleci/python:3
     environment:

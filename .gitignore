@@ -12,3 +12,4 @@ dist/
 .DS_Store
 version.py
 .pytest_cache/
+.python-version

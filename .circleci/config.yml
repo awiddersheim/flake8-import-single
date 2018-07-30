@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  python27: &test-template
+  python27: &pytest-template
     docker:
       - image: circleci/python:2.7
     environment:
@@ -8,45 +8,57 @@ jobs:
     steps:
       - checkout
       - run: pip install --user tox
-      - run: /home/circleci/.local/bin/tox
+      - run: /home/circleci/.local/bin/tox -- --color yes --cov-report html --junitxml test_results/pytest/results.xml
+      - run: tar --directory htmlcov -czvf coverage.tar.gz .
+      - store_artifacts:
+          path: coverage.tar.gz
+          destination: coverage.tar.gz
+      - store_artifacts:
+          path: test_results/pytest/results.xml
+          destination: pytest_results.xml
+      - store_test_results:
+          path: test_results
 
   python34:
-    <<: *test-template
+    <<: *pytest-template
     docker:
       - image: circleci/python:3.4
     environment:
       TOXENV: py34
 
   python35:
-    <<: *test-template
+    <<: *pytest-template
     docker:
       - image: circleci/python:3.5
     environment:
       TOXENV: py35
 
   python36:
-    <<: *test-template
+    <<: *pytest-template
     docker:
       - image: circleci/python:3.6
     environment:
       TOXENV: py36
 
   python37:
-    <<: *test-template
+    <<: *pytest-template
     docker:
       - image: circleci/python:3.7
     environment:
       TOXENV: py37
 
-  flake8:
-    <<: *test-template
+  flake8: &tox-template
     docker:
       - image: circleci/python:3
     environment:
       TOXENV: flake8
+    steps:
+      - checkout
+      - run: pip install --user tox
+      - run: /home/circleci/.local/bin/tox
 
   check_readme:
-    <<: *test-template
+    <<: *tox-template
     docker:
       - image: circleci/python:3
     environment:
@@ -64,6 +76,21 @@ jobs:
       - store_artifacts:
           path: dist
           destination: packages
+      - persist_to_workspace:
+          root: .
+          paths:
+            - dist
+
+  deploy:
+    docker:
+      - image: circleci/python:3
+    environment:
+      TOXENV: deploy
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - run: pip install --user tox
+      - run: /home/circleci/.local/bin/tox -- /tmp/workspace/dist/*
 
 workflows:
   version: 2
@@ -107,5 +134,13 @@ workflows:
             - python36
             - python37
           filters:
+            tags:
+              only: /^v.*/
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
             tags:
               only: /^v.*/

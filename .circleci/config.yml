@@ -89,6 +89,7 @@ jobs:
     steps:
       - attach_workspace:
           at: /tmp/workspace
+      - checkout
       - run: pip install --user tox
       - run: /home/circleci/.local/bin/tox -- /tmp/workspace/dist/*
 

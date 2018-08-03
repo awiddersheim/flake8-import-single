@@ -35,5 +35,5 @@ release = repo.create_git_release(
     target_commitish=os.environ.get('CIRCLE_TAG', os.environ['CIRCLE_SHA1'])
 )
 
-for item in glob.glob(sys.argv[0]):
+for item in glob.glob(sys.argv[1]):
     release.upload_asset(item)

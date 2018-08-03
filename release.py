@@ -15,7 +15,7 @@ def run_command(command):
     ).strip().decode('utf-8')
 
 
-def main()
+def main():
     github = Github(os.environ['GITHUB_TOKEN'])
 
     repo = github.get_user().get_repo(

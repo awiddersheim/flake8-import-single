@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import glob
 import os
 import subprocess
 import sys
@@ -30,7 +31,6 @@ release = repo.create_git_release(
                 os.environ['CIRCLE_SHA1'],
             ),
         ),
-    draft=True,
     prerelease=os.environ.get('CIRCLE_TAG') is None,
     target_commitish=os.environ.get('CIRCLE_TAG', os.environ['CIRCLE_SHA1'])
 )

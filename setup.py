@@ -14,7 +14,7 @@ def local_scheme(version):
 
     for item in iter_entry_points(
         'setuptools_scm.local_scheme',
-        'node-and-timestamp'
+        'node-and-timestamp',
     ):
         return item.load()(version)
 
@@ -27,7 +27,7 @@ setup(
     name='flake8-import-single',
     use_scm_version={
         'local_scheme': local_scheme,
-        'write_to': 'flake8_import_single/version.py'
+        'write_to': 'flake8_import_single/version.py',
     },
     setup_requires=[
         'setuptools_scm',
@@ -75,7 +75,7 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Software Development :: Quality Assurance',
-        'Operating System :: OS Independent'
+        'Operating System :: OS Independent',
     ],
     python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*',
 )

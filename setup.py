@@ -26,6 +26,7 @@ with io.open('README.rst', encoding='utf-8') as f:
 setup(
     name='flake8-import-single',
     use_scm_version={
+        'git_describe_command': 'git describe --dirty --tags --long --match "v*.*" --exclude "*.dev*"',
         'local_scheme': local_scheme,
         'write_to': 'flake8_import_single/version.py',
     },

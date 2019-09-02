@@ -47,7 +47,7 @@ jobs:
     environment:
       TOXENV: py37
 
-  flake8: &tox-template
+  flake8:
     docker:
       - image: circleci/python:3
     environment:
@@ -56,13 +56,6 @@ jobs:
       - checkout
       - run: pip install --user tox
       - run: /home/circleci/.local/bin/tox
-
-  check_readme:
-    <<: *tox-template
-    docker:
-      - image: circleci/python:3
-    environment:
-      TOXENV: check_readme
 
   build:
     docker:
@@ -81,43 +74,29 @@ jobs:
           paths:
             - dist
 
-  deploy_pypi:
+  deploy:
     docker:
       - image: circleci/python:3
     environment:
-      TOXENV: deploy_pypi
-    steps:
-      - attach_workspace:
-          at: /tmp/workspace
-      - checkout
-      - run: pip install --user tox
-      - run: /home/circleci/.local/bin/tox -- '/tmp/workspace/dist/*'
-
-  deploy_github:
-    docker:
-      - image: circleci/python:3
-    environment:
-      TOXENV: deploy_github
+      TOXENV: deploy
     steps:
       - attach_workspace:
           at: /tmp/workspace
       - checkout
       - run: pip install --user tox
       - run: |
-          export GITHUB_RELEASE_CICD_REPO=$(python setup.py --name)
-          export GITHUB_RELEASE_CICD_CREATE_TAG="v$(python setup.py --version)"
-          export GITHUB_RELEASE_CICD_CREATE_MESSAGE=$(git show --no-patch --pretty=format:"%s%n%b" ${CIRCLE_SHA1})
-          export GITHUB_RELEASE_CICD_CREATE_TARGET=${CIRCLE_SHA1}
-          /home/circleci/.local/bin/tox -- --assets '/tmp/workspace/dist/*'
+          export GITHUB_RELEASE_CICD_REPO="$(python setup.py --name)"
+          export GITHUB_RELEASE_CICD_CREATE_NAME="$(python setup.py --version)"
+          export GITHUB_RELEASE_CICD_CREATE_TAG="v${GITHUB_RELEASE_CICD_CREATE_NAME}"
+          export GITHUB_RELEASE_CICD_CREATE_MESSAGE="$([ -z "${CIRCLE_TAG}" ] && git show --no-patch --pretty=format:%s%n%n%b ${CIRCLE_SHA1} || git tag --list --format="%(contents)" ${CIRCLE_TAG})"
+          export GITHUB_RELEASE_CICD_CREATE_PRERELEASE="$([ -z "${CIRCLE_TAG}" ] && echo true || echo false)"
+          export GITHUB_RELEASE_CICD_CREATE_TARGET="${CIRCLE_SHA1}"
+          /home/circleci/.local/bin/tox -- '/tmp/workspace/dist/*'
 
 workflows:
   version: 2
   test-and-build:
     jobs:
-      - check_readme:
-          filters:
-            tags:
-              only: /^v.*/
       - flake8:
           filters:
             tags:
@@ -144,7 +123,6 @@ workflows:
               only: /^v.*/
       - build:
           requires:
-            - check_readme
             - flake8
             - python27
             - python34
@@ -154,17 +132,9 @@ workflows:
           filters:
             tags:
               only: /^v.*/
-      - deploy_pypi:
+      - deploy:
           requires:
             - build
           filters:
-            tags:
-              only: /^v.*/
-      - deploy_github:
-          requires:
-            - build
-          filters:
-            branches:
-              ignore: /.*/
             tags:
               only: /^v.*/

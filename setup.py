@@ -7,7 +7,7 @@ from setuptools import setup
 def local_scheme(version):
     from pkg_resources import iter_entry_points
 
-    # NOTE(awiddersheim): Modify default behaviour slighlty by not
+    # NOTE(awiddersheim): Modify default behaviour slightly by not
     # adding any local scheme to a clean `master` branch.
     if version.branch == 'master' and not version.dirty:
         return ''
@@ -19,14 +19,14 @@ def local_scheme(version):
         return item.load()(version)
 
 
-with io.open('README.rst', encoding='utf-8') as f:
+with io.open('README.md', encoding='utf-8') as f:
     long_description = f.read()
 
 
 setup(
     name='flake8-import-single',
     use_scm_version={
-        'git_describe_command': 'git describe --dirty --tags --long --match "v*.*" --exclude "*.dev*"',
+        'git_describe_command': 'git describe --dirty --tags --long --match "v*.*" --exclude "*.dev*" --first-parent',
         'local_scheme': local_scheme,
         'write_to': 'flake8_import_single/version.py',
     },
@@ -38,6 +38,7 @@ setup(
     url='https://github.com/awiddersheim/flake8-import-single',
     description='Flake8 plugin that requires single line imports',
     long_description=long_description,
+    long_description_content_type='text/markdown',
     packages=find_packages(exclude=['tests', 'tests.*']),
     install_requires=[
         'flake8',
